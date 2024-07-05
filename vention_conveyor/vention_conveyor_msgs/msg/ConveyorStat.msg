@@ -1,0 +1,2 @@
+float32 current_position
+bool is_ready

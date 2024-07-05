@@ -1,0 +1,25 @@
+<launch>
+
+  <!-- $(arg prefix) is used in most of the config files, whenever subst_value=true -->
+  <arg name="prefix" default=""/>
+
+  <arg name="simulation" default="false" doc="Whether a gazebo simulation of the real robot is used." />
+  
+  <include file="$(find workbench_description)/launch/upload_workbench_assemble.launch" />
+
+  <!-- Robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+        <!-- <remap from="/tf"        to="tf_robot_state_publisher" /> -->
+        <!-- <remap from="/tf_static" to="tf_static_robot_state_publisher" /> -->
+  </node>
+
+  <node name="gripper_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+      <param name="publish_frequency" type="double" value="100.0" />
+  </node>
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="publish_frequency" type="double" value="100.0" />
+        <rosparam param="source_list">[/gripper/joint_states]</rosparam>
+  </node>
+
+</launch>

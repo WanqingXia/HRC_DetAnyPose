@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: ur_description
+    relative_path: urdf/ur_combine.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/ur.srdf
+  CONFIG:
+    author_name: Wanqing
+    author_email: wxia612@aucklanduni.ac.nz
+    generated_timestamp: 1662096122

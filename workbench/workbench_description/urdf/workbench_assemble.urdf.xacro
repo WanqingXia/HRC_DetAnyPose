@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<robot name="workbench_assemble" xmlns:xacro="https://ros.org/wiki/xacro">
+
+    <xacro:arg name="robot" default="workbench_assemble" />      <!-- can be "mobipick-hb" or "mobipick-os" -->
+    <xacro:property name="robot" value="$(arg robot)" />  <!-- necessary because args cannot be accessed inside ${} expressions -->
+    <xacro:property name="prefix" value="" />
+    <!-- workbench-->
+    <xacro:include filename="$(find vention_conveyor_description)/urdf/workbench_table.urdf.xacro" />
+
+    <link name="world" />
+
+    <!--joint that connects world and workbench-->
+    <joint name="world_joint" type="fixed">
+        <parent link="world" />
+        <child link="workbench_base" />
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <xacro:workbench_table prefix="" />
+
+    <!-- ur5e -->
+    <xacro:include filename="$(find ur_description)/urdf/inc/ur5e_macro.xacro" />
+
+    <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" />
+    <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/ur5e/joint_limits.yaml"/>
+    <xacro:arg name="kinematics_params" default="$(find ur_description)/config/ur5e/default_kinematics.yaml"/>
+
+
+    <xacro:ur5e_robot prefix="${prefix}"
+    transmission_hw_interface="$(arg transmission_hw_interface)"
+    joint_limits_parameters_file="$(arg joint_limit_params)"
+    kinematics_parameters_file="$(arg kinematics_params)" />
+
+    
+    <!--joint that connects workbench and ur5e-->
+    <joint name="attachment_joint" type="fixed">
+        <parent link="workbench_mount" />
+        <child link="${prefix}base_link" />
+        <origin xyz="0.0 0.0 0.00" rpy="0 0.0 3.14159" />
+    </joint>
+
+
+
+    <!-- ############## FT SENSOR ############### -->
+    <!-- gripper coupling (ISO 9409-1-50-4-M / Robotiq AGC-CPL-062-002_20171219) -->
+    <xacro:property name="coupling_radius" value="0.0375" />
+    <xacro:property name="coupling_outer_length" value="0.014" />
+    <xacro:property name="coupling_inner_length" value="0.008" />
+    <xacro:property name="coupling_mass" value="0.100" />
+
+    <xacro:include filename="$(find robotiq_ft_sensor)/urdf/robotiq_ft300.urdf.xacro" />
+
+    <xacro:robotiq_ft300 parent="${prefix}tool0" prefix="${prefix}">
+        <origin xyz="0 0 ${-coupling_inner_length / 2}" rpy="0 0 ${-pi/2}" />
+    </xacro:robotiq_ft300>
+
+
+    <!-- ############### CAMERA MOUNT ################ -->
+    <xacro:include filename="$(find azure_kinect_ros_driver)/urdf/camera_mount.urdf.xacro" />
+
+    <xacro:azure_camera_mount prefix="${prefix}" parent="${prefix}robotiq_ft_frame_id" >
+        <origin xyz="0.05 0.0375 0.04" rpy="${pi/2} ${pi} 0"/>
+    </xacro:azure_camera_mount>
+
+    <!-- ############### CAMERA ################ -->
+    <xacro:include filename="$(find azure_kinect_ros_driver)/urdf/azure_kinect.urdf.xacro" />
+
+    <xacro:azure_kinect prefix="${prefix}" parent="${prefix}camera_link" >
+        <origin xyz="0.05 -0.04 0.106" rpy="0 0 ${-pi/2}"/>
+    </xacro:azure_kinect>
+
+    <!-- ############### GRIPPER ################ -->
+    
+    <xacro:include filename="$(find robotiq_85_description)/urdf/robotiq_85_gripper.urdf.xacro" />
+
+    <joint name="${prefix}robotiq_coupler_joint" type="fixed">
+        <parent link="${prefix}tool_link"/>
+        <child link="${prefix}gripper_coupler_link"/>
+        <origin xyz="0.05 0.025 0.04" rpy="${-pi/2} 0 0" />
+    </joint>
+    
+    <link name="${prefix}gripper_coupler_link">
+        <visual>
+            <geometry>
+                <cylinder radius="0.04" length="0.017"/>
+            </geometry>
+            <material name="black">
+                <color rgba="1 1 1 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.04" length="0.017"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <xacro:robotiq_85_gripper prefix="${prefix}" parent="${prefix}gripper_coupler_link" >
+        <origin xyz="0 0 -0.008" rpy="0 ${pi/2} ${-pi/2}" />
+    </xacro:robotiq_85_gripper>
+
+</robot>

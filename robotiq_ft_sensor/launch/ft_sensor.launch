@@ -1,0 +1,9 @@
+<launch>
+    <arg name="serial_id" default="ttyUSB0"/>
+	        
+    <!-- Robotiq 85 ROS Driver -->
+    <node pkg="robotiq_ft_sensor" type="rq_sensor" name="robotiq_ft_sensor" respawn="true" output="screen">
+        <param name="serial_id" value="$(arg serial_id)" />
+    </node>
+
+</launch>

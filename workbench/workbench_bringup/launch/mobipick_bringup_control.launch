@@ -1,0 +1,76 @@
+<!--
+    Launches drivers for the UR5, force torque sensor and the gripper.
+    Use this on the mobipick-os-control pc, as only this has a connection to
+    the UR5-pc.
+-->
+<launch>
+    <!-- launch the driver for the UR5.
+         This is mostly copied from ur_modern_driver/launch/ur5_ros_control.launch,
+         but adjusted for our mobipick:
+         Nodes that are already started on the sensor pc (e.g. robot_state_publisher)
+         are left out, as well as loading a robot description.
+         Also, the "mobipick" and "ur5_" prefixes have been added.
+    -->
+    <arg name="robot_ip" default="192.168.100.64" />
+    <arg name="min_payload" default="0.0" />
+    <arg name="max_payload" default="3.0" />
+    <arg name="max_velocity" default="10" /> <!-- [rad/s] -->
+    <arg name="shutdown_on_disconnect" default="true" />
+
+    <arg name="namespace" default="mobipick" />
+    <arg name="prefix" default="$(arg namespace)/ur5_" />
+    <arg name="base_frame" default="$(arg prefix)base" />
+    <arg name="tool_frame" default="$(arg prefix)tool0_controller" />
+    <arg name="ur5_kinematics_file" default="$(find mobipick_description)/config/ur5_calibration.yaml" />
+
+    <!-- load the controller parameters here, not in the ur_control.launch, to be able to substitute the prefix arg -->
+    <rosparam file="$(find mobipick_bringup)/config/ur5_controllers.yaml" command="load" subst_value="True" ns="$(arg namespace)" />
+
+    <include file="$(find ur_robot_driver)/launch/ur_control.launch" ns="$(arg namespace)">
+      <arg name="controller_config_file" value="$(find mobipick_bringup)/config/empty.yaml" /> <!-- hack: avoid loading wrong parameters by loading none -->
+      <arg name="robot_ip" value="$(arg robot_ip)" />
+      <arg name="kinematics_config" value="$(arg ur5_kinematics_file)" />
+      <arg name="tf_prefix" value="$(arg prefix)" />
+      <arg name="use_tool_communication" value="false" />
+      <arg name="controllers" value="joint_state_controller arm_controller force_torque_sensor_controller" />
+    </include>
+
+    <!-- launch the driver for the robotiq 2f gripper -->
+    <arg name="gripper_device" default="/dev/gripper" />
+    <group ns="$(arg namespace)">
+        <!-- the node that actually talks to the hardware via USB -->
+        <node name="gripper_hw" pkg="robotiq_2f_gripper_control" type="Robotiq2FGripperRtuNode.py" args="$(arg gripper_device)">
+            <remap from="Robotiq2FGripperRobotInput" to="~/input" />
+            <remap from="Robotiq2FGripperRobotOutput" to="~/output" />
+        </node>
+
+        <!-- the action server -->
+        <include file="$(find robotiq_2f_gripper_action_server)/launch/robotiq_2f_gripper_action_server.launch">
+            <arg name="min_gap" value="-0.015" />
+            <arg name="max_gap" value="0.140" /> <!-- meters. we have th 140mm version, default is 85mm -->
+            <arg name="gripper_name" value="gripper_hw" /> <!-- connect to hw node -->
+        </include>
+
+        <!-- add a node that translates the gripper data into a joint state -->
+        <node name="gripper_joint_state_publisher" pkg="mobipick_bringup" type="gripper_joint_state_publisher.py">
+          <param name="prefix" value="$(arg namespace)/" />
+          <remap from="input" to="gripper_hw/input" />
+          <remap from="joint_states" to="gripper_joint_states" />
+        </node>
+
+        <!-- activate the gripper -->
+        <node name="gripper_initialization" pkg="mobipick_bringup" type="initialize_gripper.sh" />
+    </group>
+
+
+    <!-- launch the driver for the force torque sensor -->
+    <group ns="$(arg namespace)">
+        <node name="ft_sensor" pkg="robotiq_ft_sensor" type="rq_sensor" output="screen">
+          <param name="serial_id" value="ft_sensor" />
+          <remap from="robotiq_ft_sensor" to="~sensor" />
+          <remap from="robotiq_ft_wrench" to="~wrench" />
+          <remap from="robotiq_ft_sensor_acc" to="~sensor_acc" />
+          <!-- param name="frame_id" value="???" -->
+        </node>
+    </group>
+</launch>

@@ -1,0 +1,9 @@
+color_ft
+depth_ft
+executables_ft
+global_ft
+imu_ft
+cpp_projection_ft
+k4a_cpp_ft
+rwlock_ft
+k4a_example_test

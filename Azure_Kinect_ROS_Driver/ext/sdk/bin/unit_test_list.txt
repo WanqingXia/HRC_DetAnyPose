@@ -1,0 +1,16 @@
+calibration_ut
+capturesync_ut
+color_ut
+depth_ut
+azure_c_shared_test
+logging_ut
+imu_ut
+record_ut
+playback_ut
+custom_track_ut
+transformation_ut
+allocator_ut
+depthmcu_ut
+dynlib_ut
+handle_ut
+queue_ut

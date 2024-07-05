@@ -1,0 +1,3 @@
+float32 desired_position
+float32 speed
+float32 acceleration

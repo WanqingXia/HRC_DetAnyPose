@@ -1,0 +1,18 @@
+<launch>
+    <arg name="min_position"           default="0"/>
+    <arg name="max_position"           default="710"/>
+    <arg name="ip"                     default="192.168.12.200"/>
+    <arg name="init_acceleration"      default="50"/>
+    <arg name="init_speed"             default="50"/>
+
+	        
+    <!-- Robotiq 85 ROS Driver -->
+    <node pkg="vention_conveyor_driver" type="conveyor_launch.py" name="vention_conveyor_driver" respawn="true" output="screen">
+        <param name="min_position"        value="$(arg min_position)" />
+        <param name="max_position"        value="$(arg max_position)" />
+        <param name="ip"                  value="$(arg ip)" />
+        <param name="init_acceleration"   value="$(arg init_acceleration)" />
+        <param name="init_speed"          value="$(arg init_speed)" />
+    </node>
+
+</launch>
