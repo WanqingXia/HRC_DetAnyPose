@@ -17,7 +17,7 @@ from scipy.spatial.transform import Rotation as R
 
 # Initialize OpenAI API
 client = OpenAI(
-    api_key="sk-proj-YROABCgnjm08g5hMZvYGT3BlbkFJC1Eaj1Awq5VOhZB6mMCj",
+    api_key="your openai api key",
 )
 
 def gpt4_api_call(system_message, text_message, image_message=None):

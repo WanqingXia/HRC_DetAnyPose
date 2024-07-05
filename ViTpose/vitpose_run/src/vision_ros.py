@@ -52,7 +52,7 @@ if dinov2_dir not in sys.path:
 # Initialize OpenAI API
 client = OpenAI(
     # This is the default and can be omitted
-    api_key="sk-proj-YROABCgnjm08g5hMZvYGT3BlbkFJC1Eaj1Awq5VOhZB6mMCj",
+    api_key="your openai api key",
 )
 
 def gpt4_api_call(system_message, text_message, image_message=None):

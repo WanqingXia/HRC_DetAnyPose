@@ -1,4 +1,4 @@
-name: ViTpose
+name: HRC_ViTpose
 channels:
   - conda-forge
   - pytorch
