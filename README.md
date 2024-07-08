@@ -2,7 +2,12 @@
  
 This project combines our previouslt developed algorithm ViTpose, GPT4o and UR5e robot control to achieve a full pipeline of object pose estimation and robot control. The pipeline is will request users to speak their requirements to microphone. The voice command will be converted to text. Then, the camera will take a picture of current scene and input the picture together with text to GPT4o to determine the object to be manipulated. The object pose will be estimated by ViTpose and guide robot to grasp the object. The whole pipeline is illustrated in the following figure.
 
-![pipeline](./docs/pipeline.png)
+![pipeline](./structure.jpg)
+
+The following video is a system demonstration of our implemented system in the LISMS lab.
+[![Video Title](https://www.youtube.com/watch?v=jefZLsnaWiI/0.jpg)](https://www.youtube.com/watch?v=jefZLsnaWiI)
+
+
 ## Development Environment Setup
 System requirement: Ubuntu 20.04, Python version: Python3.9
 
