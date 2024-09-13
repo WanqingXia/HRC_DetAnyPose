@@ -1,6 +1,6 @@
-# HRC-ViTpose
+# HRC-DetAnyPose
  
-This project combines our previously developed algorithm ViTpose, GPT4o and UR5e robot control to achieve a full pipeline of object pose estimation and robot control. The pipeline will request users to speak their requirements to the microphone. The voice command will be converted to text. Then, the camera will take a picture of the current scene and input the picture together with text to GPT4o to determine the object to be manipulated. The object pose will be estimated by ViTpose and guide the robot to grasp the object. The whole pipeline is illustrated in the following figure.
+This project combines our previously developed algorithm DetAnyPose, GPT4o and UR5e robot control to achieve a full pipeline of object pose estimation and robot control. The pipeline will request users to speak their requirements to the microphone. The voice command will be converted to text. Then, the camera will take a picture of the current scene and input the picture together with text to GPT4o to determine the object to be manipulated. The object pose will be estimated by DetAnyPose, who will guide the robot in grasping the object. The whole pipeline is illustrated in the following figure.
 
 ![pipeline](./structure.jpg)
 
@@ -15,16 +15,16 @@ Hardware requirement: NVIDIA GPU with 24GB memory, UR5e robot, Microsoft Azure K
 ### Clone project
 ```shell
 # create a catkin workspace
-mkdir -p HRC_ViTpose/src && cd HRC_ViTpose/src
+mkdir -p HRC_DetAnyPose/src && cd HRC_DetAnyPose/src
 # clone the project
-git clone https://github.com/WanqingXia/HRC_ViTpose.git .
+git clone https://github.com/WanqingXia/HRC_DetAnyPose.git .
 # Incstall ROS
 sudo apt-get install ros-noetic-desktop-full
 ```
 ### Create environment with conda
 ```shell
 conda env create -f environment.yaml
-conda activate HRC_ViTpose
+conda activate HRC_DetAnyPose
 ```
 
 ### Python Dependencies Installation
@@ -59,9 +59,9 @@ ur_ikfast: follow instructions [here](https://github.com/cambel/ur_ikfast)
 pykinect_azure: follow instructions [here](https://github.com/ibaiGorordo/pyKinectAzure)
 
 
-### Download Pre-trained Models for ViTpose
+### Download Pre-trained Models for DetAnyPose
 ```shell
-cd src/ViTpose/vitpose_run/src
+cd src/DetAnyPose/vitpose_run/src
 
 git clone https://github.com/facebookresearch/dinov2.git
 git clone https://github.com/open-mmlab/mmdetection.git
@@ -95,10 +95,10 @@ unzip ycbv_models.zip -d ycbv     # Unpacks to "ycbv".
 ## Building project
 
 ```shell
-cd HRC_ViTpose
+cd HRC_DetAnyPose
 catkin build # ur_calibration fails in building but it does not affect the project
 
-echo 'source $HOME/HRC_ViTpose/devel/setup.bash' >> ~/.bashrc 
+echo 'source $HOME/HRC_DetAnyPose/devel/setup.bash' >> ~/.bashrc 
 source ~/.bashrc
 ```
 
